@@ -5,6 +5,8 @@ import { config_5x5, config_4x4, config_6x6 } from "./PuzzleOptions";
 
 export default function App() {
   let [model, setModel] = React.useState(new Model())
+
+  let currentConfig = null;
   const canvasRef = React.useRef(null); // so we can access the Canvas elsewhere
 
   React.useEffect(() => {
@@ -13,7 +15,10 @@ export default function App() {
 
   const handleConfig = (config) =>{
     model = new Model(config);
+    currentConfig = config; // save current config for reset
   };
+
+  const handleMoveCol = () => {};
 
   return (
     <main>
@@ -30,7 +35,7 @@ export default function App() {
         <button className='game-button'>Complete Game</button>
       </div>
       <div className="button-group">
-        <button className="move-button">Up</button>
+        <button className='move-button'>Up</button>
         <button className='move-button'>Down</button>
         <button className='move-button'>Left</button>
         <button className='move-button'>Right</button>

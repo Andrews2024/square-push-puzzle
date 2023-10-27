@@ -9,9 +9,7 @@ export default function App() {
   let currentConfig = null;
   const canvasRef = React.useRef(null); // so we can access the Canvas elsewhere
 
-  React.useEffect(() => {
-    console.log(canvasRef.current);
-  }, [canvasRef]);
+  React.useEffect(() => {}, [canvasRef]);
 
   const handleConfig = (config) =>{
     model = new Model(config);

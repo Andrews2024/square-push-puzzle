@@ -11,22 +11,26 @@ class Square {
 
 class Puzzle {
     constructor(boardInfo) {
-        this.rows = boardInfo.numRows;
-        this.columns = boardInfo.numColumns;
-        this.board = new Array(this.rows, this.columns).fill(new Square("white", false));
+        this.rows = parseInt(boardInfo.numRows);
+        this.columns = parseInt(boardInfo.numColumns);
+        this.board = Array(this.rows).fill().map(() => Array(this.columns).fill().map(() => new Square("white", false))); //.fill(new Square("white", false))); // fill with empty squares
         this.removableColor = false; // for tracking when we can remove a color
     
-        this.initialize(boardInfo)
+        this.initialize(boardInfo);
     }
 
     initialize(boardInfo) {
-        //set up initial configuration
         // get ninja coordinates and add Ninja-se to the board
         this.ninjaCoords = this.extractNinja(boardInfo);
-        console.log(`ninja: ${this.ninjaCoords[0] + " " + this.ninjaCoords[1]}`);
-
-        // for coord in this.ninjaCoords
-            // change this.board[coord] to green, true
+        
+        for (var i = 0; i < this.ninjaCoords.length; i++) { // for coord in this.ninjaCoords
+            let row = this.ninjaCoords[i][0];
+            let col = this.ninjaCoords[i][1];
+            
+            // go to the Square at those coords and change its color and isNinja
+            this.board[row][col].color = "green";
+            this.board[row][col].isNinja = true;
+        }
         
         // get coordinates of other defined squares and add them to the board
         //this.colorCoords = this.extractBoard(boardInfo);

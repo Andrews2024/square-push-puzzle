@@ -1,25 +1,30 @@
 import React from 'react';
 import './App.css';
-import { initialize } from './Model.js';
-import { config_5x5, config_4x4, config_6x6, config_0x0 } from "./PuzzleOptions";
+import Model from './Model.js';
+import { config_5x5, config_4x4, config_6x6 } from "./PuzzleOptions";
 
 export default function App() {
+  let [model, setModel] = React.useState(new Model())
   const canvasRef = React.useRef(null); // so we can access the Canvas elsewhere
 
   React.useEffect(() => {
-    let canvas = canvasRef.current;
-  }, []);
+    console.log(canvasRef.current);
+  }, [canvasRef]);
+
+  const handleConfig = (config) =>{
+    model = new Model(config);
+  };
 
   return (
     <main>
       <div className="button-group">
-        <button className='config-button' onClick={initialize(config_4x4, canvasRef.current)}>4x4</button>
-        <button className='config-button' onClick={initialize(config_5x5, canvasRef.current)}>5x5</button>
-        <button className='config-button' onClick={initialize(config_6x6, canvasRef.current)}>6x6</button>
+        <button className='config-button' onClick={() => handleConfig(config_4x4)}>4x4</button>
+        <button className='config-button' onClick={() => handleConfig(config_5x5)}>5x5</button>
+        <button className='config-button' onClick={() => handleConfig(config_6x6)}>6x6</button>
       </div>
 
-      <canvas id='ctx' ref={canvasRef} width='600' height='600' />
-      
+      <canvas id='ctx' ref={canvasRef} width='300' height='300' />
+
       <div className='button-group'>
         <button className='game-button'>Reset Game</button>
         <button className='game-button'>Complete Game</button>

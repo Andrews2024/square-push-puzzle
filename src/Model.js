@@ -33,22 +33,56 @@ class Puzzle {
         }
         
         // get coordinates of other defined squares and add them to the board
-        //this.colorCoords = this.extractBoard(boardInfo);
-        //console.log(`colors: ${this.colorCoords}`);
+        this.colorCoords = this.extractBoard(boardInfo);
 
-        // for coord in this.colorCoords
-            // change this.board[coord] to color
+        for (var j = 0; j < this.colorCoords.length; j++) { // for coord in this.colorCoords
+            let row = this.colorCoords[j][0];
+            let col = this.colorCoords[j][1];
+            
+            // go to the Square at those coords and change its color
+            this.board[row][col].color = this.colorCoords[j][2];
+        }
 
-        // this.board now has nxn squares with colors
+        // this.board now has nxn squares with colors and Ninja-se
     }
 
     extractBoard(boardInfo) {
+        let allSquares = [];
         // for square in boardInfo.initial
-            // get row from row
+        for (let i = 0; i < boardInfo.initial.length; i++) {
+            let square = boardInfo.initial[i]; // get current square
+            let row = parseInt(square.row) - 1; // get row from row and 0-index
+            
             // get column from column and convert to number
-            // get color from color
-            // add [row, col], color to list
-        // return coordinates and colors with each coordinate
+            let col = 0;
+
+            switch (square.column) {
+                case "A":
+                    col = 0;
+                    break;
+                case "B":
+                    col = 1;
+                    break;
+                case "C":
+                    col = 2;
+                    break;
+                case "D":
+                    col = 3;
+                    break;
+                case "E":
+                    col = 4;
+                    break;
+                case "F":
+                    col = 5;
+                    break;
+            }
+
+            let color = square.color; // get color from color
+
+            allSquares.push([row, col, color]); // add square to list
+        }
+        
+        return allSquares; // return coordinates and colors with each coordinate
     }
 
     extractNinja(boardInfo) {
@@ -82,16 +116,22 @@ class Puzzle {
         }
         
         // get other coordinates by adding to row, column, and row and column
-        ninjaCoords.push([ninjaRow, ninjaCol]);
-        ninjaCoords.push([ninjaRow, ninjaCol + 1]);
-        ninjaCoords.push([ninjaRow + 1, ninjaCol]);
-        ninjaCoords.push([ninjaRow + 1, ninjaCol + 1]);
+        ninjaCoords.push([ninjaRow, ninjaCol]); // top left
+        ninjaCoords.push([ninjaRow, ninjaCol + 1]); // top right
+        ninjaCoords.push([ninjaRow + 1, ninjaCol]); // bottom left
+        ninjaCoords.push([ninjaRow + 1, ninjaCol + 1]); // bottom right
         
         // return the 4 ninja coordinates
         return ninjaCoords;
     }
 
-    moveCol(direction) {
+    moveUp() {
+        // for each column of Ninja-se
+            // if no blocks directly above
+                // decrease row of all ninjaCoords
+            
+            // if block directly above, but no blocks after, move block and then Ninja-se
+
         // handle moving Ninja-se up or down
         // get columns affected by Ninja-se
         // make copy of current columns 
@@ -100,6 +140,10 @@ class Puzzle {
             // if square color not white/ green and coords changed 
                 // increment score
         // increment move counter and numbre of squares affected (score)
+    }
+
+    moveDown() {
+
     }
 
     moveRow(direction) {
@@ -131,7 +175,7 @@ export default class Model {
         this.id = Model._id;
         Model._id++;
 
-        if (typeof config === 'undefined') { return; } // if no config set, end initialization
+        if (config == null) { return; } // if no config set, end initialization
 
         this.initialize(config);
     }

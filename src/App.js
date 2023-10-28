@@ -16,7 +16,11 @@ export default function App() {
     currentConfig = config; // save current config for reset
   };
 
-  const handleMoveCol = () => {};
+  const handleReset = () => {
+    model = new Model(currentConfig);
+  };
+
+  const handleMoveUp = () => {};
 
   return (
     <main>
@@ -29,7 +33,7 @@ export default function App() {
       <canvas id='ctx' ref={canvasRef} width='300' height='300' />
 
       <div className='button-group'>
-        <button className='game-button'>Reset Game</button>
+        <button className='game-button' onClick={() => handleReset()}>Reset Game</button>
         <button className='game-button'>Complete Game</button>
       </div>
       <div className="button-group">

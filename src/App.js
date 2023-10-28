@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import './App.css';
 import Model from './Model.js';
 import { config_5x5, config_4x4, config_6x6 } from "./PuzzleOptions";
 
 export default function App() {
   let [model, setModel] = React.useState(new Model())
+  let [numMoves, setNumMoves] = React.useState(0);
 
   let currentConfig = null;
+  
+  
   const canvasRef = React.useRef(null); // so we can access the Canvas elsewhere
 
   React.useEffect(() => {}, [canvasRef]);
+  React.useEffect(() => {}, [numMoves]);
 
   const handleConfig = (config) =>{
     model = new Model(config);
@@ -18,9 +22,24 @@ export default function App() {
 
   const handleReset = () => {
     model = new Model(currentConfig);
+    setNumMoves((prev) => 0);
   };
 
-  const handleMoveUp = () => {};
+  const handleMoveUp = () => {
+    setNumMoves((prev) => prev + 1);
+  };
+
+  const handleMoveDown = () => {
+    setNumMoves((prev) => prev + 1);
+  };
+
+  const handleMoveLeft = () => {
+    setNumMoves((prev) => prev + 1);
+  };
+
+  const handleMoveRight = () => {
+    setNumMoves((prev) => prev + 1);
+  };
 
   return (
     <main>
@@ -36,11 +55,17 @@ export default function App() {
         <button className='game-button' onClick={() => handleReset()}>Reset Game</button>
         <button className='game-button'>Complete Game</button>
       </div>
+
       <div className="button-group">
-        <button className='move-button'>Up</button>
-        <button className='move-button'>Down</button>
-        <button className='move-button'>Left</button>
-        <button className='move-button'>Right</button>
+        <button className='move-button' onClick={() => handleMoveUp()}>Up</button>
+        <button className='move-button' onClick={() => handleMoveDown()}>Down</button>
+        <button className='move-button' onClick={() => handleMoveLeft()}>Left</button>
+        <button className='move-button' onClick={() => handleMoveRight()}>Right</button>
+      </div>
+
+      <div className="scoreboard">
+        <p className="num-moves">Move Count: {numMoves}</p>
+        <p className="score">Score: {}</p>
       </div>
     </main>
   );

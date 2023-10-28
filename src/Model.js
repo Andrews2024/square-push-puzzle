@@ -28,7 +28,7 @@ class Puzzle {
             let col = this.ninjaCoords[i][1];
             
             // go to the Square at those coords and change its color and isNinja
-            this.board[row][col].color = "green";
+            this.board[row][col].color = "#22b14c";
             this.board[row][col].isNinja = true;
         }
         
@@ -125,8 +125,49 @@ class Puzzle {
         return ninjaCoords;
     }
 
+    updatePuzzle() {
+        // wipe the board to start fresh
+        this.board = Array(this.rows).fill().map(() => Array(this.columns).fill().map(() => new Square("white", false)));
+        
+        // Redraw Ninja-se
+        for (var i = 0; i < this.ninjaCoords.length; i++) { // for coord in this.ninjaCoords
+            let row = this.ninjaCoords[i][0];
+            let col = this.ninjaCoords[i][1];
+            
+            // go to the Square at those coords and change its color and isNinja
+            this.board[row][col].color = "green";
+            this.board[row][col].isNinja = true;
+        }
+        
+        // Redraw colored squares
+        for (var j = 0; j < this.colorCoords.length; j++) { // for coord in this.colorCoords
+            let row = this.colorCoords[j][0];
+            let col = this.colorCoords[j][1];
+            
+            // go to the Square at those coords and change its color
+            this.board[row][col].color = this.colorCoords[j][2];
+        }
+    }
+
     moveUp() {
-        // for each column of Ninja-se
+        // ninjaCoords = top left, top right, bottom left, bottom right
+        let ninjaCols = [this.ninjaCoords[0][1], this.ninjaCoords[1][1]]; // cols of top left, top right
+        let ninjaTopRow = this.ninjaCoords[0][0];
+        let rowAbove = ninjaTopRow - 1; // assuming Up is disabled if ninja at the top
+        let orderOfRows = []; // might use this later for multi-block pushes
+        
+        let scoreThisMove = 0;
+
+        for (var i = 0; i < ninjaCols.length; i++) { // for each column of Ninja-se
+            let squareAbove = this.board[rowAbove][ninjaCols[i]];
+
+            if (squareAbove.color === "white") { // square above is empty
+                // move Ninja-se up by decrementing row
+                this.ninjaCoords[0 + i][0]--; // first val in column
+                this.ninjaCoords[2 + i][0]--; // second val in column
+            }
+        }
+        
             // if no blocks directly above
                 // decrease row of all ninjaCoords
             
@@ -140,6 +181,8 @@ class Puzzle {
             // if square color not white/ green and coords changed 
                 // increment score
         // increment move counter and numbre of squares affected (score)
+
+        this.updatePuzzle();
     }
 
     moveDown() {

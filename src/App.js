@@ -1,28 +1,34 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import './App.css';
 import Model from './Model.js';
+
 import { config_5x5, config_4x4, config_6x6 } from "./PuzzleOptions";
+import { redrawCanvas } from "./Canvas.js";
 
 export default function App() {
   let [model, setModel] = React.useState(new Model())
   let [numMoves, setNumMoves] = React.useState(0);
+  let [redraw, setRedraw] = React.useState(0); // for handling redraw of board
 
   let currentConfig = null;
   
-  
   const canvasRef = React.useRef(null); // so we can access the Canvas elsewhere
+  const appRef = React.useRef(null);
 
-  React.useEffect(() => {}, [canvasRef]);
-  React.useEffect(() => {}, [numMoves]);
+  React.useEffect (() => { redrawCanvas(model, canvasRef.current, appRef.current); }, [model, redraw]); // sets up refreshing of board
+  React.useEffect(() => {}, [numMoves]); // sets up refreshing of move counter
 
   const handleConfig = (config) =>{
-    model = new Model(config);
+    setModel((prev) => new Model(config));
     currentConfig = config; // save current config for reset
+    setNumMoves((prev) => 0);
+    setRedraw(redraw++); // redraw puzzle
   };
 
   const handleReset = () => {
-    model = new Model(currentConfig);
+    setModel((prev) => new Model(currentConfig));
     setNumMoves((prev) => 0);
+    setRedraw(redraw++); // redraw puzzle
   };
 
   const handleMoveUp = () => {
@@ -42,14 +48,14 @@ export default function App() {
   };
 
   return (
-    <main>
+    <main className="App" ref={appRef}>
       <div className="button-group">
         <button className='config-button' onClick={() => handleConfig(config_4x4)}>4x4</button>
         <button className='config-button' onClick={() => handleConfig(config_5x5)}>5x5</button>
         <button className='config-button' onClick={() => handleConfig(config_6x6)}>6x6</button>
       </div>
 
-      <canvas id='ctx' ref={canvasRef} width='300' height='300' />
+      <canvas id='ctx' ref={canvasRef} width={300} height={300} />
 
       <div className='button-group'>
         <button className='game-button' onClick={() => handleReset()}>Reset Game</button>

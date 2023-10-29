@@ -8,9 +8,11 @@ import { redrawCanvas } from "./Canvas.js";
 export default function App() {
   let [model, setModel] = React.useState(new Model())
   let [numMoves, setNumMoves] = React.useState(0);
+  let [score, setScore] = React.useState(0);
   let [redraw, setRedraw] = React.useState(0); // for handling redraw of board
 
   let currentConfig = null;
+  let scoreUpdate = 0;
   
   const canvasRef = React.useRef(null); // so we can access the Canvas elsewhere
   const appRef = React.useRef(null);
@@ -22,17 +24,20 @@ export default function App() {
     setModel((prev) => new Model(config));
     currentConfig = config; // save current config for reset
     setNumMoves((prev) => 0);
-    setRedraw(redraw++); // redraw puzzle
+    setScore((prev) => 0);
   };
 
   const handleReset = () => {
     setModel((prev) => new Model(currentConfig));
     setNumMoves((prev) => 0);
-    setRedraw(redraw++); // redraw puzzle
+    setScore((prev) => 0);
   };
 
   const handleMoveUp = () => {
     setNumMoves((prev) => prev + 1);
+    scoreUpdate = model.puzzle.moveUp();
+    setScore((prev) => prev + scoreUpdate);
+    setRedraw((prev) => prev + 1); // redraw puzzle
   };
 
   const handleMoveDown = () => {
@@ -71,7 +76,7 @@ export default function App() {
 
       <div className="scoreboard">
         <p className="num-moves">Move Count: {numMoves}</p>
-        <p className="score">Score: {}</p>
+        <p className="score">Score: {score}</p>
       </div>
     </main>
   );

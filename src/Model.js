@@ -155,6 +155,8 @@ class Puzzle {
             // go to the Square at those coords and change its color
             this.board[row][col].color = this.colorCoords[j][2];
         }
+
+        this.checkDirections()
     }
 
     moveUp() {
@@ -162,27 +164,40 @@ class Puzzle {
         let ninjaCols = [this.ninjaCoords[0][1], this.ninjaCoords[1][1]]; // cols of top left, top right
         let ninjaTopRow = this.ninjaCoords[0][0];
         let rowAbove = ninjaTopRow - 1; // assuming Up is disabled if ninja at the top
+
         let orderOfRows = []; // might use this later for multi-block pushes
         
         let scoreThisMove = 0;
 
         for (var i = 0; i < ninjaCols.length; i++) { // for each column of Ninja-se
             let squareAbove = this.board[rowAbove][ninjaCols[i]];
+            
+            // get colored squares in this column and remove them from this.colorCoords
+            let colorsInCol = this.colorCoords.filter(square => square[1] === ninjaCols[i]); // get only the colored squares in this column
+            colorsInCol.forEach(colSquare => this.colorCoords.splice(this.colorCoords.findIndex(boardSquare => colSquare === boardSquare), 1));
 
             if (squareAbove.color === "white") { // square above is empty
                 // move Ninja-se up by decrementing row
                 this.ninjaCoords[0 + i][0]--; // first val in column
                 this.ninjaCoords[2 + i][0]--; // second val in column
             }
+
+            if (colorsInCol.length + 2 === this.rows) { // if column is full
+                // move Ninja-se up by decrementing row
+                this.ninjaCoords[0 + i][0]--; // first val in column
+                this.ninjaCoords[2 + i][0]--; // second val in column
+
+                // move other squares up by decrementing row
+                colorsInCol.forEach(square => square[0] = (square[0] + this.rows - 1) % this.rows); // + numRows - 1 to decrement but stay in 0 to numRows range for modulo
+                colorsInCol.forEach(square => this.colorCoords.push(square));
+
+                // update score
+                scoreThisMove += colorsInCol.length;
+            }
         }
-        
-            // if no blocks directly above
-                // decrease row of all ninjaCoords
             
             // if block directly above, but no blocks after, move block and then Ninja-se
 
-        // handle moving Ninja-se up or down
-        // get columns affected by Ninja-se
         // make copy of current columns 
         // increment coords of all squares (modulo for looping)
         // for squares in the two columns
@@ -191,6 +206,7 @@ class Puzzle {
         // increment move counter and numbre of squares affected (score)
 
         this.updatePuzzle();
+        return scoreThisMove; // return update for score
     }
 
     moveDown() {

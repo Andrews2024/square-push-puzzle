@@ -63,10 +63,10 @@ export default function App() {
       </div>
 
       <div className="button-group">
-        <button className='move-button' onClick={() => handleMoveUp()}>Up</button>
-        <button className='move-button' onClick={() => handleMoveDown()}>Down</button>
-        <button className='move-button' onClick={() => handleMoveLeft()}>Left</button>
-        <button className='move-button' onClick={() => handleMoveRight()}>Right</button>
+        <button className='move-button' onClick={() => handleMoveUp()} disabled={!model.puzzle.up}>Up</button>
+        <button className='move-button' onClick={() => handleMoveDown()} disabled={!model.puzzle.down}>Down</button>
+        <button className='move-button' onClick={() => handleMoveLeft()} disabled={!model.puzzle.left}>Left</button>
+        <button className='move-button' onClick={() => handleMoveRight()} disabled={!model.puzzle.right}>Right</button>
       </div>
 
       <div className="scoreboard">

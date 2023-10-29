@@ -11,12 +11,20 @@ class Square {
 
 class Puzzle {
     constructor(boardInfo) {
+        this.up = false;
+        this.down = false;
+        this.left = false;
+        this.right = false;
+
+        if (boardInfo == null) { return; } // buttons are available, but no puzzle
+
         this.rows = parseInt(boardInfo.numRows);
         this.columns = parseInt(boardInfo.numColumns);
         this.board = Array(this.rows).fill().map(() => Array(this.columns).fill().map(() => new Square("white", false))); //.fill(new Square("white", false))); // fill with empty squares
         this.removableColor = false; // for tracking when we can remove a color
     
         this.initialize(boardInfo);
+        this.checkDirections();
     }
 
     initialize(boardInfo) {
@@ -135,7 +143,7 @@ class Puzzle {
             let col = this.ninjaCoords[i][1];
             
             // go to the Square at those coords and change its color and isNinja
-            this.board[row][col].color = "green";
+            this.board[row][col].color = "#22b14c";
             this.board[row][col].isNinja = true;
         }
         
@@ -209,6 +217,15 @@ class Puzzle {
                     // if so, return the four coords
         // return false
     }
+
+    checkDirections() { //check each direction to see if Ninja-se can go that way
+        let topLeft = this.ninjaCoords[0];
+        
+        this.up = !(topLeft[0] === 0); //check up - is top left corner in 0th row?
+        this.down = !(topLeft[0] === this.rows - 2);// check down - is top left corner in row above bottom?
+        this.left = !(topLeft[1] === 0); // check left - is top left corner in 0th column?
+        this.right = !(topLeft[1] === this.columns - 2); // check right - is top left corner a column to the left of right edge
+    }
 }
 
 export default class Model {
@@ -218,7 +235,10 @@ export default class Model {
         this.id = Model._id;
         Model._id++;
 
-        if (config == null) { return; } // if no config set, end initialization
+        if (config == null) { 
+            this.puzzle = new Puzzle();
+            return; 
+        } // if no config set, end initialization
 
         this.initialize(config);
     }

@@ -165,8 +165,6 @@ class Puzzle {
         let ninjaTopRow = this.ninjaCoords[0][0];
         let rowAbove = ninjaTopRow - 1; // assuming Up is disabled if ninja at the top
 
-        let orderOfRows = []; // might use this later for multi-block pushes
-        
         let scoreThisMove = 0;
 
         for (var i = 0; i < ninjaCols.length; i++) { // for each column of Ninja-se
@@ -182,7 +180,7 @@ class Puzzle {
                 this.ninjaCoords[2 + i][0]--; // second val in column
             }
 
-            if (colorsInCol.length + 2 === this.rows) { // if column is full
+            else if (colorsInCol.length + 2 === this.rows) { // if column is full
                 // move Ninja-se up by decrementing row
                 this.ninjaCoords[0 + i][0]--; // first val in column
                 this.ninjaCoords[2 + i][0]--; // second val in column
@@ -193,6 +191,10 @@ class Puzzle {
 
                 // update score
                 scoreThisMove += colorsInCol.length;
+            }
+
+            else { // column has some empty space somewhere
+                let orderOfRows = []; // might use this later for multi-block pushes
             }
         }
             
@@ -210,7 +212,46 @@ class Puzzle {
     }
 
     moveDown() {
+        // ninjaCoords = top left, top right, bottom left, bottom right
+        let ninjaCols = [this.ninjaCoords[0][1], this.ninjaCoords[1][1]]; // cols of top left, top right
+        let ninjaTopRow = this.ninjaCoords[0][0];
 
+        let scoreThisMove = 0;
+
+        for (var i = 0; i < ninjaCols.length; i++) { // for each column of Ninja-se
+            let squareBelow = this.board[ninjaTopRow + 2][ninjaCols[i]];
+            
+            // get colored squares in this column and remove them from this.colorCoords
+            let colorsInCol = this.colorCoords.filter(square => square[1] === ninjaCols[i]); // get only the colored squares in this column
+            colorsInCol.forEach(colSquare => this.colorCoords.splice(this.colorCoords.findIndex(boardSquare => colSquare === boardSquare), 1));
+
+            if (squareBelow.color === "white") { // square above is empty
+                // move Ninja-se up by decrementing row
+                this.ninjaCoords[0 + i][0]++; // first val in column
+                this.ninjaCoords[2 + i][0]++; // second val in column
+            }
+
+            else if (colorsInCol.length + 2 === this.rows) { // if column is full
+                // move Ninja-se up by decrementing row
+                this.ninjaCoords[0 + i][0]++; // first val in column
+                this.ninjaCoords[2 + i][0]++; // second val in column
+
+                // move other squares up by decrementing row
+                colorsInCol.forEach(square => square[0] = (square[0] + 1) % this.rows);
+                colorsInCol.forEach(square => this.colorCoords.push(square));
+
+                // update score
+                scoreThisMove += colorsInCol.length;
+            }
+
+            else { // column has some empty space somewhere
+                let orderOfRows = []; // might use this later for multi-block pushes
+            }
+        }
+            
+
+        this.updatePuzzle();
+        return scoreThisMove; // return update for score
     }
 
     moveRow(direction) {

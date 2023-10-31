@@ -343,20 +343,103 @@ class Puzzle {
             }
         }
             
-
         this.updatePuzzle();
         return scoreThisMove; // return update for score
     }
 
-    moveRow(direction) {
-        // handle moving Ninja-se left or right
-        // get rows affected by Ninja-se
-        // make copy of current rows 
-        // increment coords of all squares (modulo for looping)
-        // for squares in the two rows
-            // if square color not white/ green and coords changed 
-                // increment score
-        // increment move counter and numbre of squares affected (score)
+    moveLeft() {
+        // ninjaCoords = top left, top right, bottom left, bottom right
+        let ninjaRows = [this.ninjaCoords[0][0], this.ninjaCoords[2][0]]; // rows of top and bottom left
+        let ninjaLeftCol = this.ninjaCoords[0][1];
+        let colLeft = ninjaLeftCol - 1; // left disabled when invalid
+
+        let scoreThisMove = 0;
+
+        for (var i = 0; i < ninjaRows.length; i++) { // for each row of Ninja-se
+            let squareLeft = this.board[ninjaRows[i]][colLeft];
+            
+            // get colored squares in this row and remove them from this.colorCoords
+            let colorsInRow = this.colorCoords.filter(square => square[0] === ninjaRows[i]); // get only the colored squares in this column
+            colorsInRow.forEach(rowSquare => this.colorCoords.splice(this.colorCoords.findIndex(boardSquare => rowSquare === boardSquare), 1));
+
+            if (squareLeft.color === "white") { // square left is empty
+                // move Ninja-se up by decrementing column
+                this.ninjaCoords[0 + 2*i][1]--; // first val in row
+                this.ninjaCoords[1 + 2*i][1]--; // second val in row
+
+                // add the colored squares back to this.colorCoords
+                colorsInRow.forEach(square => this.colorCoords.push(square));
+            }
+
+            else if (colorsInRow.length + 2 === this.columns) { // if row is full
+                // move Ninja-se left by decrementing column
+                this.ninjaCoords[0 + 2*i][1]--; // first val in row
+                this.ninjaCoords[1 + 2*i][1]--; // second val in row
+
+                // move other squares left by decrementing column
+                colorsInRow.forEach(square => square[1] = (square[1] + this.columns - 1) % this.columns); // + numRows - 1 to decrement but stay in 0 to numRows range for modulo
+                colorsInRow.forEach(square => this.colorCoords.push(square));
+
+                // update score
+                scoreThisMove += colorsInRow.length;
+            }
+
+            else { // row has some empty space somewhere
+                // move Ninja-se left by decrementing column
+                this.ninjaCoords[0 + 2*i][1]--; // first val in row
+                this.ninjaCoords[1 + 2*i][1]--; // second val in row
+
+                // get colored squares above Ninja-se in order
+                colorsInRow.sort().reverse(); // sort by column value greatest to least (e.g. 5, 4, 0)
+                let orderedColors = colorsInRow.filter(square => square[1] < ninjaLeftCol);
+                for (let i = 0; i < colorsInRow.length; i++) { // add remaining colors under Ninja-se
+                    if (colorsInRow[i][1] > ninjaLeftCol + 1) { orderedColors.push(colorsInRow[i]); }
+                }
+
+                // Move squares around as needed
+                for (let j = 0; j < orderedColors.length; j++) {
+                    let currentColorSquare = orderedColors[j];
+
+                    if (j < orderedColors.length - 1) { // if we still have colors to look at ahaead of this one
+                        if (currentColorSquare[1] - 1 !== orderedColors[j + 1][1] && currentColorSquare[1] !== 0) { // if next colored square more than 1 row away AND rows in question are not 0 and n
+                            scoreThisMove++; // increase score by 1
+                            orderedColors[j][1]--; // move current square left
+                            break; // no more squares in line, break for loop
+                        }
+
+                        else if (currentColorSquare[0] === 0 && orderedColors[j + 1][1] !== this.rows - 1) {
+                            scoreThisMove++; // increase score by 1
+                            orderedColors[j][1] = this.columns - 1; // loop around current square
+                            break;
+                        }
+
+                        else if (currentColorSquare[0] === 0 && orderedColors[j + 1][1] === this.rows - 1) { // if looping around and there's a square there
+                            scoreThisMove++; // increase score by 1
+                            orderedColors[j][1] = this.columns - 1; // move current around to right
+                        }
+
+                        else {
+                            scoreThisMove++; // increase score by 1
+                            orderedColors[j][1] = (orderedColors[j][1] - 1 + this.columns) % this.columns;
+                        }
+                    }
+
+                    else { // last element in the list gets moved if we got this far
+                        scoreThisMove++;
+                        orderedColors[j][1] = (orderedColors[j][1] - 1 + this.columns) % this.columns;
+                    }
+                }
+
+                orderedColors.forEach(square => this.colorCoords.push(square)); // add the squares back
+            }
+        }
+        
+        this.updatePuzzle();
+        return scoreThisMove; // return update for score
+    }
+
+    moveRight() {
+        
     }
 
     check2x2() {

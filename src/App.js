@@ -49,6 +49,9 @@ export default function App() {
 
   const handleMoveLeft = () => {
     setNumMoves((prev) => prev + 1);
+    scoreUpdate = model.puzzle.moveLeft();
+    setScore((prev) => prev + scoreUpdate);
+    setRedraw((prev) => prev + 1); // redraw puzzle
   };
 
   const handleMoveRight = () => {

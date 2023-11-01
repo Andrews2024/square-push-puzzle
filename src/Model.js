@@ -165,6 +165,7 @@ class Puzzle {
 
         this.checkDirections();
         this.check2x2();
+        this.checkComplete();
     }
 
     moveUp() {
@@ -408,13 +409,13 @@ class Puzzle {
                             break; // no more squares in line, break for loop
                         }
 
-                        else if (currentColorSquare[0] === 0 && orderedColors[j + 1][1] !== this.rows - 1) {
+                        else if (currentColorSquare[1] === 0 && orderedColors[j + 1][1] !== this.rows - 1) {
                             scoreThisMove++; // increase score by 1
                             orderedColors[j][1] = this.columns - 1; // loop around current square
                             break;
                         }
 
-                        else if (currentColorSquare[0] === 0 && orderedColors[j + 1][1] === this.rows - 1) { // if looping around and there's a square there
+                        else if (currentColorSquare[1] === 0 && orderedColors[j + 1][1] === this.rows - 1) { // if looping around and there's a square there
                             scoreThisMove++; // increase score by 1
                             orderedColors[j][1] = this.columns - 1; // move current around to right
                         }
@@ -476,6 +477,7 @@ class Puzzle {
             }
 
             else { // row has some empty space somewhere
+                console.log("Partial row case")
                 // move Ninja-se left by decrementing column
                 this.ninjaCoords[0 + 2*i][1]++; // first val in row
                 this.ninjaCoords[1 + 2*i][1]++; // second val in row
@@ -491,20 +493,20 @@ class Puzzle {
                 for (let j = 0; j < orderedColors.length; j++) {
                     let currentColorSquare = orderedColors[j];
 
-                    if (j < orderedColors.length - 1) { // if we still have colors to look at ahaead of this one
+                    if (j < orderedColors.length - 1) { // if we still have colors to look at ahead of this one
                         if (currentColorSquare[1] - 1 !== orderedColors[j + 1][1] && currentColorSquare[1] !== 0) { // if next colored square more than 1 row away AND rows in question are not 0 and n
                             scoreThisMove++; // increase score by 1
                             orderedColors[j][1]++; // move current square left
                             break; // no more squares in line, break for loop
                         }
 
-                        else if (currentColorSquare[0] === 0 && orderedColors[j + 1][1] !== this.rows - 1) {
+                        else if (currentColorSquare[1] === this.columns - 1 && orderedColors[j + 1][1] !== 0) {
                             scoreThisMove++; // increase score by 1
                             orderedColors[j][1] = 0; // loop around current square
                             break;
                         }
 
-                        else if (currentColorSquare[0] === 0 && orderedColors[j + 1][1] === this.rows - 1) { // if looping around and there's a square there
+                        else if (currentColorSquare[1] === this.columns - 1 && orderedColors[j + 1][1] === 0) { // if looping around and there's a square there
                             scoreThisMove++; // increase score by 1
                             orderedColors[j][1] = 0; // move current around to right
                         }
@@ -581,6 +583,10 @@ class Puzzle {
 
         // update the board
         this.updatePuzzle();
+    }
+
+    checkComplete() {
+        this.complete = this.colorCoords.length === 0;
     }
 }
 

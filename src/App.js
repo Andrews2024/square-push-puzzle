@@ -11,6 +11,7 @@ export default function App() {
   let [score, setScore] = React.useState(0);
   let [redraw, setRedraw] = React.useState(0); // for handling redraw of board
   let [currentConfig, setCurrentConfig] = React.useState(0); // store config for reset
+  let [complete, setComplete] = React.useState(false);
 
   let scoreUpdate = 0;
   
@@ -68,6 +69,11 @@ export default function App() {
     setRedraw((prev) => prev + 1); // redraw puzzle
   };
 
+  const handleComplete = () => {
+    setComplete((prev) => true);
+    setModel((prev) => new Model(null));
+  };
+
   return (
     <main className="App" ref={appRef}>
       <div className="button-group">
@@ -79,8 +85,8 @@ export default function App() {
       <canvas id='ctx' ref={canvasRef} width={300} height={300} />
 
       <div className='button-group'>
-        <button className='game-button' onClick={() => handleReset()}>Reset Game</button>
-        <button className='game-button'>Complete Game</button>
+        <button className='game-button' onClick={() => handleReset()} disabled={currentConfig === 0}>Reset Game</button>
+        <button className='game-button' onClick={() => handleComplete()} disabled={!model.puzzle.complete}>Complete Game</button>
       </div>
 
       <div className="button-group">
@@ -94,6 +100,9 @@ export default function App() {
       <div className="scoreboard">
         <p className="num-moves">Move Count: {numMoves}</p>
         <p className="score">Score: {score}</p>
+      </div>
+      <div className="complete" hidden={!complete}>
+        <p>You completed the game! Select a configuration to continue.</p>
       </div>
     </main>
   );

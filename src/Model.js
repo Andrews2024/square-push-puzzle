@@ -163,8 +163,8 @@ class Puzzle {
             this.board[row][col].color = this.colorCoords[j][2];
         }
 
-        this.checkDirections()
-        this.check2x2()
+        this.checkDirections();
+        this.check2x2();
     }
 
     moveUp() {
@@ -335,7 +335,6 @@ class Puzzle {
                     }
 
                     else { // last element in the list gets moved if we got this far
-                        console.log("Last element case")
                         scoreThisMove++;
                         orderedColors[j][0] = (orderedColors[j][0] + 1) % this.rows;
                     }
@@ -455,7 +454,6 @@ class Puzzle {
             colorsInRow.forEach(rowSquare => this.colorCoords.splice(this.colorCoords.findIndex(boardSquare => rowSquare === boardSquare), 1));
 
             if (squareRight.color === "white") { // square left is empty
-                console.log("Hi")
                 // move Ninja-se up by decrementing column
                 this.ninjaCoords[0 + 2*i][1]++; // first val in row
                 this.ninjaCoords[1 + 2*i][1]++; // second val in row
@@ -559,8 +557,8 @@ class Puzzle {
                 continue;
             }
             else {
-                this.removableColor = [this.colorCoords[i][0], this.colorCoords[i + 1][0], this.colorCoords[i + 2][0], this.colorCoords[i + 3][0]]
-                return;
+                this.removableColor = [this.colorCoords[i], this.colorCoords[i + 1], this.colorCoords[i + 2], this.colorCoords[i + 3]]
+                return; // return first color only
             }
         }
     }
@@ -575,8 +573,14 @@ class Puzzle {
     }
 
     removeColor() {
+        // remove each square of that color from 
+        this.removableColor.forEach(removableSquare => this.colorCoords.splice(this.colorCoords.indexOf(removableSquare), 1));
+
         // reset this.removableColor
         this.removableColor = false;
+
+        // update the board
+        this.updatePuzzle();
     }
 }
 

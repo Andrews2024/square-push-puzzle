@@ -64,8 +64,9 @@ export default function App() {
   const handleRemove = () => {
     setNumMoves((prev) => prev + 1)
     setScore((prev) => prev + 4)
+    model.puzzle.removeColor();
     setRedraw((prev) => prev + 1); // redraw puzzle
-  }
+  };
 
   return (
     <main className="App" ref={appRef}>

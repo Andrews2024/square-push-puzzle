@@ -10,8 +10,8 @@ export default function App() {
   let [numMoves, setNumMoves] = React.useState(0);
   let [score, setScore] = React.useState(0);
   let [redraw, setRedraw] = React.useState(0); // for handling redraw of board
+  let [currentConfig, setCurrentConfig] = React.useState(0); // store config for reset
 
-  let currentConfig = null;
   let scoreUpdate = 0;
   
   const canvasRef = React.useRef(null); // so we can access the Canvas elsewhere
@@ -22,7 +22,7 @@ export default function App() {
 
   const handleConfig = (config) =>{
     setModel((prev) => new Model(config));
-    currentConfig = config; // save current config for reset
+    setCurrentConfig((prev) => config); // save current config for reset
     setNumMoves((prev) => 0);
     setScore((prev) => 0);
   };
@@ -61,6 +61,12 @@ export default function App() {
     setRedraw((prev) => prev + 1); // redraw puzzle
   };
 
+  const handleRemove = () => {
+    setNumMoves((prev) => prev + 1)
+    setScore((prev) => prev + 4)
+    setRedraw((prev) => prev + 1); // redraw puzzle
+  }
+
   return (
     <main className="App" ref={appRef}>
       <div className="button-group">
@@ -81,6 +87,7 @@ export default function App() {
         <button className='move-button' onClick={() => handleMoveDown()} disabled={!model.puzzle.down}>Down</button>
         <button className='move-button' onClick={() => handleMoveLeft()} disabled={!model.puzzle.left}>Left</button>
         <button className='move-button' onClick={() => handleMoveRight()} disabled={!model.puzzle.right}>Right</button>
+        <button className='move-button' onClick={() => handleRemove()} disabled={!model.puzzle.removableColor}>Remove Color</button>
       </div>
 
       <div className="scoreboard">

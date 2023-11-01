@@ -15,13 +15,14 @@ class Puzzle {
         this.down = false;
         this.left = false;
         this.right = false;
+        this.removableColor = false; // for tracking when we can remove a color
+        this.complete = false;
 
         if (boardInfo == null) { return; } // buttons are available, but no puzzle
 
         this.rows = parseInt(boardInfo.numRows);
         this.columns = parseInt(boardInfo.numColumns);
         this.board = Array(this.rows).fill().map(() => Array(this.columns).fill().map(() => new Square("white", false))); //.fill(new Square("white", false))); // fill with empty squares
-        this.removableColor = false; // for tracking when we can remove a color
     
         this.initialize(boardInfo);
         this.checkDirections();
@@ -163,6 +164,7 @@ class Puzzle {
         }
 
         this.checkDirections()
+        this.check2x2()
     }
 
     moveUp() {
@@ -442,7 +444,6 @@ class Puzzle {
         // ninjaCoords = top left, top right, bottom left, bottom right
         let ninjaRows = [this.ninjaCoords[0][0], this.ninjaCoords[2][0]]; // rows of top and bottom left
         let ninjaLeftCol = this.ninjaCoords[0][1];
-        let colLeft = ninjaLeftCol - 1; // left disabled when invalid
 
         let scoreThisMove = 0;
 
@@ -531,13 +532,37 @@ class Puzzle {
     }
 
     check2x2() {
-        // return coords of squares to "remove" if they are 2x2
-        // for each row in board - 1
-            // for each col in board - 1
-                // if square not white/ green
-                    // check if other three squares are same color
-                    // if so, return the four coords
-        // return false
+        // sort colorCoords by color
+        this.colorCoords.sort(function (a, b) {
+            if (a[2] > b[2]) { return 1; }
+            if (b[2] > a[2]) { return -1; }
+            return 0;
+        });
+
+        // check in groups of 4
+        for (var i = 0; i < this.colorCoords.length; i += 4) {
+            // get cols and rows of current color
+            let rowsOfCurrentColor = [this.colorCoords[i][0], this.colorCoords[i + 1][0], this.colorCoords[i + 2][0], this.colorCoords[i + 3][0]];
+            let colsOfCurrentColor = [this.colorCoords[i][1], this.colorCoords[i + 1][1], this.colorCoords[i + 2][1], this.colorCoords[i + 3][1]];
+        
+            // turn into sets to get unique values only
+            let uniqueRows = [...new Set(rowsOfCurrentColor)];
+            let uniqueColumns = [...new Set(colsOfCurrentColor)];
+
+            if (uniqueRows.length !== 2 || uniqueColumns.length !== 2) { // squares should have only 2 rows and 2 columns
+                continue;
+            }
+            else if (Math.abs(uniqueRows[0] - uniqueRows[1]) !== 1) { // check that rows are next to each other
+                continue;
+            }
+            else if (Math.abs(uniqueColumns[0] - uniqueColumns[1]) !== 1) { // check that columns are next to each other
+                continue;
+            }
+            else {
+                this.removableColor = [this.colorCoords[i][0], this.colorCoords[i + 1][0], this.colorCoords[i + 2][0], this.colorCoords[i + 3][0]]
+                return;
+            }
+        }
     }
 
     checkDirections() { //check each direction to see if Ninja-se can go that way
@@ -547,6 +572,11 @@ class Puzzle {
         this.down = !(topLeft[0] === this.rows - 2);// check down - is top left corner in row above bottom?
         this.left = !(topLeft[1] === 0); // check left - is top left corner in 0th column?
         this.right = !(topLeft[1] === this.columns - 2); // check right - is top left corner a column to the left of right edge
+    }
+
+    removeColor() {
+        // reset this.removableColor
+        this.removableColor = false;
     }
 }
 

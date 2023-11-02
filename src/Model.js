@@ -477,13 +477,12 @@ class Puzzle {
             }
 
             else { // row has some empty space somewhere
-                console.log("Partial row case")
                 // move Ninja-se left by decrementing column
                 this.ninjaCoords[0 + 2*i][1]++; // first val in row
                 this.ninjaCoords[1 + 2*i][1]++; // second val in row
 
                 // get colored squares above Ninja-se in order
-                colorsInRow.sort().reverse(); // sort by column value greatest to least (e.g. 5, 4, 0)
+                colorsInRow.sort(); // sort by column value greatest to least (e.g. 5, 4, 0)
                 let orderedColors = colorsInRow.filter(square => square[1] > ninjaLeftCol + 1);
                 for (let i = 0; i < colorsInRow.length; i++) { // add remaining colors under Ninja-se
                     if (colorsInRow[i][1] < ninjaLeftCol) { orderedColors.push(colorsInRow[i]); }
@@ -492,15 +491,16 @@ class Puzzle {
                 // Move squares around as needed
                 for (let j = 0; j < orderedColors.length; j++) {
                     let currentColorSquare = orderedColors[j];
+                    console.log(currentColorSquare[2]);
 
                     if (j < orderedColors.length - 1) { // if we still have colors to look at ahead of this one
-                        if (currentColorSquare[1] - 1 !== orderedColors[j + 1][1] && currentColorSquare[1] !== 0) { // if next colored square more than 1 row away AND rows in question are not 0 and n
+                        if (currentColorSquare[1] + 1 !== orderedColors[j + 1][1] && currentColorSquare[1] !== this.columns - 1) { // if next colored square more than 1 row away AND rows in question are not 0 and n
                             scoreThisMove++; // increase score by 1
-                            orderedColors[j][1]++; // move current square left
+                            orderedColors[j][1]++; // move current square right
                             break; // no more squares in line, break for loop
                         }
 
-                        else if (currentColorSquare[1] === this.columns - 1 && orderedColors[j + 1][1] !== 0) {
+                        else if (currentColorSquare[1] === this.columns - 1 && orderedColors[j + 1][1] !== 0) { // ig looping around and no square
                             scoreThisMove++; // increase score by 1
                             orderedColors[j][1] = 0; // loop around current square
                             break;

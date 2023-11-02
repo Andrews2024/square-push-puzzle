@@ -18,8 +18,7 @@ export default function App() {
   const canvasRef = React.useRef(null); // so we can access the Canvas elsewhere
   const appRef = React.useRef(null);
 
-  React.useEffect (() => { redrawCanvas(model, canvasRef.current, appRef.current); }, [model, redraw]); // sets up refreshing of board
-  React.useEffect(() => {}, [numMoves]); // sets up refreshing of move counter
+  React.useEffect (() => { redrawCanvas(model, canvasRef.current); }, [model, redraw]); // sets up refreshing of board
 
   const handleConfig = (config) =>{
     setModel((prev) => new Model(config));
@@ -71,7 +70,7 @@ export default function App() {
 
   const handleComplete = () => {
     setComplete((prev) => true);
-    setModel((prev) => new Model(null));
+    setModel((prev) => new Model(null)); // deactivate the puzzle
   };
 
   return (

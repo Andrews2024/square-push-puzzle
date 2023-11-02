@@ -1,6 +1,10 @@
-// Take in current puzzle and display it
-// Will need canvas size and access to canvas
-export function redrawCanvas(model, canvasObj, appObj) {
+/**
+ * Draws the puzzle onto the HTML canvas
+ * @param {*} model The Model object, which contains the puzzle information we need to draw
+ * @param {*} canvasObj Current state of reference to the canvas in the HTML
+ * @returns Null if no configration has been chosen
+ */
+export function redrawCanvas(model, canvasObj) {
     const ctx = canvasObj.getContext('2d');
     if (ctx == null || model.puzzle == null) { return; }    // here for before config chosen
 

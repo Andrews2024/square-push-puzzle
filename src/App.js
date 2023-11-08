@@ -25,12 +25,14 @@ export default function App() {
     setCurrentConfig((prev) => config); // save current config for reset
     setNumMoves((prev) => 0);
     setScore((prev) => 0);
+    setComplete((prev) => false);
   };
 
   const handleReset = () => {
     setModel((prev) => new Model(currentConfig));
     setNumMoves((prev) => 0);
     setScore((prev) => 0);
+    setComplete((prev) => false);
   };
 
   const handleMoveUp = () => {
@@ -66,16 +68,17 @@ export default function App() {
     setScore((prev) => prev + 4)
     model.puzzle.removeColor();
     setRedraw((prev) => prev + 1); // redraw puzzle
-  };
 
-  const handleComplete = () => {
-    setComplete((prev) => true);
-    setModel((prev) => new Model(null)); // deactivate the puzzle
+    if (model.puzzle.complete) {
+      setModel((prev) => new Model(null)); // deactivate the puzzle
+      setComplete((prev) => true);
+    }
   };
 
   return (
     <main className="App" ref={appRef}>
       <div className="button-group">
+        Select a configuration to play:
         <button className='config-button' onClick={() => handleConfig(config_4x4)}>4x4</button>
         <button className='config-button' onClick={() => handleConfig(config_5x5)}>5x5</button>
         <button className='config-button' onClick={() => handleConfig(config_6x6)}>6x6</button>
@@ -85,7 +88,7 @@ export default function App() {
 
       <div className='button-group'>
         <button className='game-button' onClick={() => handleReset()} disabled={currentConfig === 0}>Reset Game</button>
-        <button className='game-button' onClick={() => handleComplete()} disabled={!model.puzzle.complete}>Complete Game</button>
+        <button className='move-button' onClick={() => handleRemove()} disabled={!model.puzzle.removableColor}>Remove Color</button>
       </div>
 
       <div className="button-group">
@@ -93,7 +96,7 @@ export default function App() {
         <button className='move-button' onClick={() => handleMoveDown()} disabled={!model.puzzle.down}>Down</button>
         <button className='move-button' onClick={() => handleMoveLeft()} disabled={!model.puzzle.left}>Left</button>
         <button className='move-button' onClick={() => handleMoveRight()} disabled={!model.puzzle.right}>Right</button>
-        <button className='move-button' onClick={() => handleRemove()} disabled={!model.puzzle.removableColor}>Remove Color</button>
+        
       </div>
 
       <div className="scoreboard">
